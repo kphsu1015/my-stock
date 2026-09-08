@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* 介面色 —— 淺色 */
+  --color-app: #f6f6f7;
+  --color-surface: #ffffff;
+  --color-surface-2: #f3f3f5;
+  --color-line: #e7e7ea;
+  --color-line-strong: #d6d6db;
+  --color-ink: #1c1c1f;
+  --color-muted: #6b6b73;
+  --color-faint: #9a9aa3;
+  --color-accent: #4f46e5;
+  --color-accent-soft: #eef0ff;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* 漲跌 —— 台股慣例：紅漲綠跌 */
+  --color-up: #e0113b;
+  --color-down: #0a9d6e;
+  --color-flat: #8a8a92;
+
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-card: 14px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-app: #0a0a0c;
+    --color-surface: #141417;
+    --color-surface-2: #1c1c20;
+    --color-line: #26262b;
+    --color-line-strong: #34343b;
+    --color-ink: #f4f4f6;
+    --color-muted: #9d9da7;
+    --color-faint: #6c6c77;
+    --color-accent: #8b8ff5;
+    --color-accent-soft: #1e1e2e;
+
+    --color-up: #ff5c78;
+    --color-down: #2ecf9e;
+    --color-flat: #7c7c86;
   }
 }
 
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  background: var(--color-app);
+  color-scheme: light dark;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-app);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 數字對齊：金額、報價一律等寬數字 */
+.nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* 載入骨架 */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-2);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-line) 55%, transparent),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+/* 卡片 hover 微互動 */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 26%, transparent);
+}
+
+/* 細捲軸 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
 }
