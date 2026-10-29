@@ -31,15 +31,20 @@ export default function Dashboard() {
     async function poll() {
       try {
         const res = await fetch(`/api/watchlist?userId=${userId}`);
-        const json = (await res.json()) as WatchlistResponse;
+        const json = await res.json();
         if (cancelled) return;
-        setData(json);
-        setSelected((prev) => prev || json.items[0]?.symbol || "");
-        if (json.items.some((it) => it.quote?.isLive)) {
+        if (!res.ok) throw new Error(json.error || "載入追蹤清單失敗");
+        const next = json as WatchlistResponse;
+        setMsg(null);
+        setData(next);
+        setSelected((prev) => prev || next.items[0]?.symbol || "");
+        if (next.items.some((it) => it.quote?.isLive)) {
           timer = setTimeout(poll, POLL_MS);
         }
-      } catch {
-        if (!cancelled) timer = setTimeout(poll, POLL_MS);
+      } catch (e) {
+        if (cancelled) return;
+        setMsg(e instanceof Error ? e.message : "載入追蹤清單失敗");
+        timer = setTimeout(poll, POLL_MS);
       }
     }
 
